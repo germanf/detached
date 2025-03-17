@@ -42,8 +42,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validar que se haya proporcionado un comando
-if [[ -z "$COMMAND" ]]; then
-    echo "Error: Debes proporcionar un comando."
+if [[ -z "$COMMAND" && -z "$PID" ]]; then
+    echo "Error: Debes proporcionar un número de proceso para --pid o un comando."
     usage
 fi
 
@@ -53,7 +53,7 @@ if [[ -n "$PID" ]]; then
         echo "Moviendo el proceso $PID a segundo plano..."
         kill -CONT "$PID"  # Reanudar el proceso si estaba suspendido
         bg %1 2>/dev/null  # Mover a segundo plano (asume que es el trabajo 1)
-        disown  # Desvincular el proceso de la sesión actual
+        disown "$PID" 2>/dev/null # Desvincular el proceso de la sesión actual
         echo "Proceso $PID desvinculado y en segundo plano."
     else
         echo "Error: El proceso con PID $PID no existe."
