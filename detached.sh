@@ -2,7 +2,7 @@
 
 # Función para mostrar ayuda
 usage() {
-    echo "Uso: $0 [--screen] [--log] [--log-file=nombre-archivo] [--pid=numero-proceso] comando"
+    echo "Uso: $0 [--screen] [--log] [--log-file=nombre-archivo] [--pid=numero-proceso] [--trace[=PID]] comando"
     exit 1
 }
 
@@ -12,6 +12,7 @@ LOG_OUTPUT=0
 LOG_FILE=""
 PID=""
 COMMAND=""
+TRACE=""
 
 # Procesar argumentos
 while [[ $# -gt 0 ]]; do
@@ -34,6 +35,10 @@ while [[ $# -gt 0 ]]; do
             PID="${1#*=}"
             shift
             ;;
+        --trace*)
+            TRACE="${1#*=}"
+            shift
+            ;;            
         *)
             COMMAND="$*"
             break
@@ -94,4 +99,23 @@ else
         nohup bash -c "$COMMAND" > /dev/null 2>&1 &
     fi
     echo "Comando ejecutado en segundo plano con PID $!."
+fi
+
+# Caso 4: Si se proporciona --trace
+if [[ -n "$TRACE" ]]; then
+    if [[ -n "$LOG_FILE" ]]; then
+        tail -f "$LOG_FILE"
+    elif [[ "$LOG_OUTPUT" -eq 1 ]]; then
+        tail -f output.log
+    elif [[ -n "$TRACE" ]]; then
+        if [[ "$TRACE" =~ ^[0-9]+$ ]]; then
+            tail -f /proc/"$TRACE"/fd/1
+        else
+            echo "Error: Debes proporcionar un PID válido con --trace=PID."
+            exit 1
+        fi
+    else
+        echo "Error: Debes proporcionar un valor a --trace."
+        usage
+    fi
 fi
