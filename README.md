@@ -9,7 +9,7 @@ Este script está diseñado para evitar que comandos y procesos queden a medio e
 
 > `bash`
 > ```bash
-> ./detached.sh [opciones] comando
+> ./detached.sh [opciones] [comando]
 > ```
 
 **Opciones disponibles**
@@ -20,6 +20,7 @@ Este script está diseñado para evitar que comandos y procesos queden a medio e
 |  `--log`  |	Guarda la salida del comando en un archivo de log predeterminado (output.log).  |
 |  `--log-file=nombre.log`  |	Guarda la salida del comando en un archivo de log con el nombre especificado.  |
 |  `--pid=numero-proceso`  |	Mueve un proceso existente a segundo plano y lo desvincula con disown.  |
+|  `--trace[=numero-proceso]`  |	Muest la salida del archivo de registro o del proceso especificado.  |
 
 **Ejemplos de uso**
 
@@ -42,6 +43,14 @@ Este script está diseñado para evitar que comandos y procesos queden a medio e
 5. Ejecutar un comando en una sesión de screen:
 ```
 ./detached.sh --screen sleep 100
+```
+6. Muestra la salida del archivo de registro:
+```
+./detached.sh --trace
+```
+6. Muestra la salida del proceso con PID 12345:
+```
+./detached.sh --trace=12345
 ```
 
 **Motivación**
