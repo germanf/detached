@@ -55,6 +55,19 @@ if [[ -n "$PID" ]]; then
         bg %1 2>/dev/null  # Mover a segundo plano (asume que es el trabajo 1)
         disown "$PID" 2>/dev/null # Desvincular el proceso de la sesión actual
         echo "Proceso $PID desvinculado y en segundo plano."
+
+        # Redirigir la salida si se especificó --log o --log-file
+        if [[ "$LOG_OUTPUT" -eq 1 ]]; then
+            if [[ -n "$LOG_FILE" ]]; then
+                echo "Redirigiendo salida a $LOG_FILE..."
+                # Redirigir la salida del proceso a un archivo
+                tail -f /proc/$PID/fd/1 > "$LOG_FILE" 2>&1 &
+            else
+                echo "Redirigiendo salida a output.log..."
+                # Redirigir la salida del proceso a output.log
+                tail -f /proc/$PID/fd/1 > output.log 2>&1 &
+            fi
+        fi
     else
         echo "Error: El proceso con PID $PID no existe."
         exit 1
