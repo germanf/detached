@@ -47,7 +47,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validar que se haya proporcionado un comando
-if [[ -z "$COMMAND" && -z "$PID" ]]; then
+if [[ -z "$COMMAND" && -z "$PID" && -z "$TRACE"]]; then
     echo "Error: Debes proporcionar un número de proceso para --pid o un comando."
     usage
 fi
@@ -82,8 +82,10 @@ if [[ -n "$PID" ]]; then
 elif [[ "$USE_SCREEN" -eq 1 ]]; then
     echo "Ejecutando comando en una sesión de screen..."
     screen -dmS mysession bash -c "$COMMAND"
+    # Obtener el PID de la sesión de screen
+    PID=$(ps -o pid= -C screen --ppid $$ | grep -m 1 "screen" | awk '{print $1}')
     echo "Comando ejecutado en la sesión de screen 'mysession'. Usa 'screen -r mysession' para reconectar."
-
+    
 # Caso 3: Ejecución normal con nohup
 else
     if [[ "$LOG_OUTPUT" -eq 1 ]]; then
@@ -98,7 +100,9 @@ else
         echo "Ejecutando comando con nohup y descartando salida..."
         nohup bash -c "$COMMAND" > /dev/null 2>&1 &
     fi
-    echo "Comando ejecutado en segundo plano con PID $!."
+    
+    PID=$!  # `$!`: PID del último proceso ejecutado
+    echo "Comando ejecutado en segundo plano con PID $PID."
 fi
 
 # Caso 4: Si se proporciona --trace
