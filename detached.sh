@@ -47,10 +47,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validar que se haya proporcionado un comando
-if [[ -z "$COMMAND" && -z "$PID" && -z "$TRACE"]]; then
+if [[ -z "$COMMAND" && -z "$PID" && -z "$TRACE" ]]; then
     echo "Error: Debes proporcionar un número de proceso para --pid o un comando."
     usage
 fi
+
 
 # Caso 1: Si se proporciona --pid
 if [[ -n "$PID" ]]; then
