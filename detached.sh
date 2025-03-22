@@ -88,7 +88,7 @@ elif [[ "$USE_SCREEN" -eq 1 ]]; then
     echo "Comando ejecutado en la sesión de screen 'mysession'. Usa 'screen -r mysession' para reconectar."
     
 # Caso 3: Ejecución normal con nohup
-else
+elif [[ -n "$COMMAND" ]]; then
     if [[ "$LOG_OUTPUT" -eq 1 ]]; then
         if [[ -n "$LOG_FILE" ]]; then
             echo "Ejecutando comando con nohup y guardando salida en $LOG_FILE..."
